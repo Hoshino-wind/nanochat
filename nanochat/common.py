@@ -5,8 +5,6 @@ Common utilities for nanochat.
 import os
 import re
 import logging
-import torch
-import torch.distributed as dist
 
 class ColoredFormatter(logging.Formatter):
     """Custom formatter that adds colors to log messages."""
@@ -91,6 +89,9 @@ def get_dist_info():
 
 def compute_init():
     """Basic initialization that we keep doing over and over, so make common."""
+    
+    import torch
+    import torch.distributed as dist
 
     # CUDA is currently required
     assert torch.cuda.is_available(), "CUDA is needed for a distributed run atm"
@@ -124,6 +125,7 @@ def compute_init():
 def compute_cleanup():
     """Companion function to compute_init, to clean things up before script exit"""
     if is_ddp():
+        import torch.distributed as dist
         dist.destroy_process_group()
 
 class DummyWandb:
